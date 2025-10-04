@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  operator
+  admin
+}
+
+enum AlertStatus {
+  firing
+  resolved
+}
+
+enum AckState {
+  acknowledged
+  unacknowledged
+}
+
+enum ActionType {
+  control
+  start
+  shutdown
+  maintenance
+}
+
+enum LogLevel {
+  info
+  warning
+  error
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  role         Role?
+  createdAt    DateTime @default(now())
+}
+
+model Action {
+  id        Int        @id @default(autoincrement())
+  turbineId Int
+  type      ActionType
+  pitch     Int?
+  yaw       Int?
+  timestamp DateTime   @default(now())
+  user      String
+  @@index([turbineId, timestamp])
+}
+
+model Alert {
+  id           Int         @id @default(autoincrement())
+  turbineId    Int
+  type         String
+  status       AlertStatus
+  acknowledged AckState    @default(unacknowledged)
+  timestamp    DateTime    @default(now())
+  @@unique([turbineId, type])
+}
+
+model LogEntry {
+  id        Int      @id @default(autoincrement())
+  turbineId Int
+  timestamp DateTime
+  level     LogLevel
+  message   String   @db.Text
+  @@unique([turbineId, timestamp, message(length: 191)])
+  @@index([turbineId, timestamp])
+}
+
+/// Caches last known live data, including per-property timestamps
+model TurbineCache {
+  turbineId     Int     @id
+  name          String
+  locationLat   Float
+  locationLng   Float
+  data          Json    // { rpm, powerMw, yaw, pitch, temperature, status }
+  propsUpdated  Json    // { rpm, powerMw, yaw, pitch, temperature, status } -> ISO strings
+  overallUpdated DateTime
+}

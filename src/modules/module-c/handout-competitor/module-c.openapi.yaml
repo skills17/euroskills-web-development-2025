@@ -1,0 +1,610 @@
+openapi: 3.0.3
+info:
+  title: Offshore Wind Farm Control API for Frontend
+  version: "1.0.0"
+  description: |
+    REST API for live monitoring and control of an offshore wind farm.
+    This specification is the reference the competitor backend must implement.
+    All error responses conform to RFC 7807 *Problem Details for HTTP APIs* and
+    are served with the media type **application/problem+json**.
+
+servers:
+  - url: http://{baseUrl}
+    variables:
+      baseUrl:
+        default: localhost:8080
+
+security:
+  - bearerAuth: [ ]
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  parameters:
+    LogTurbineId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Unique turbine identifier
+
+    LogLevelsQuery:
+      name: levels
+      in: query
+      required: false
+      schema:
+        type: string
+        example: info,warning
+      description: Comma‑separated list of log levels to filter.
+
+    LogMessageQuery:
+      name: message
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Substring filter for log messages.
+
+  schemas:
+    ProblemDetail:
+      type: object
+      required: [ type, title, status ]
+      description: Standard error envelope (RFC 7807)
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            URI identifying the problem type. Ends in the error type "/unauthorized", "/forbidden", "/notfound",
+            "/validation", "/conflict", "/internalserver"
+          example: 'http://localhost:8080/problemtype/unauthorized'
+        title:
+          type: string
+          description: Short, human‑readable summary
+        status:
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 599
+          description: HTTP status code
+        detail:
+          type: string
+          description: Human‑readable explanation specific to this occurrence
+        instance:
+          type: string
+          format: uri
+          description: URI identifying this specific occurrence
+        errors:
+          type: object
+          additionalProperties: true
+          description: Optional object holding additional error details
+
+    LoginRequest:
+      type: object
+      required: [ username, password ]
+      properties:
+        username:
+          type: string
+          example: bob
+        password:
+          type: string
+          example: bob12345
+
+    LoginResponse:
+      type: object
+      required: [ token, role ]
+      properties:
+        token:
+          type: string
+          description: Bearer token for subsequent requests.
+        role:
+          type: string
+          enum: [ anonymous, operator, admin ]
+          example: operator
+
+    Location:
+      type: object
+      required: [ lat, lng ]
+      properties:
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+
+    TurbineSummary:
+      type: object
+      required: [ id, name, location ]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        status:
+          type: string
+          enum: [ started, maintenance, shutdown ]
+
+    TurbineStatus:
+      allOf:
+        - $ref: '#/components/schemas/FreshnessWrapper'
+        - type: object
+          required: [ id, name, rpm, powerMw, yaw, pitch, temperature, status, freshness, lastUpdated ]
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            rpm:
+              $ref: '#/components/schemas/StatusValueDouble'
+            powerMw:
+              $ref: '#/components/schemas/StatusValueDouble'
+            yaw:
+              $ref: '#/components/schemas/StatusValueDouble'
+            pitch:
+              $ref: '#/components/schemas/StatusValueDouble'
+            temperature:
+              $ref: '#/components/schemas/StatusValueDouble'
+            status:
+              $ref: '#/components/schemas/StatusValueEnum'
+
+    FreshnessWrapper:
+      type: object
+      required: [ freshness, lastUpdated ]
+      properties:
+        freshness:
+          type: string
+          enum: [ live, cached, missing ]
+        lastUpdated:
+          type: string
+          format: date-time
+
+    StatusValueDouble:
+      allOf:
+        - $ref: '#/components/schemas/FreshnessWrapper'
+        - type: object
+          properties:
+            value:
+              type: number
+              format: double
+              nullable: true
+
+    StatusValueEnum:
+      allOf:
+        - $ref: '#/components/schemas/FreshnessWrapper'
+        - type: object
+          properties:
+            value:
+              type: string
+              enum: [ started, maintenance, shutdown ]
+
+    ControlRequest:
+      type: object
+      required: [ pitch, yaw ]
+      properties:
+        pitch:
+          type: integer
+          minimum: -90
+          maximum: 90
+        yaw:
+          type: integer
+          minimum: 0
+          maximum: 360
+
+    ActionResponse:
+      type: object
+      required: [ status ]
+      properties:
+        status:
+          type: string
+          enum: [ success ]
+          example: success
+
+    ActionEntry:
+      type: object
+      required: [ type, timestamp, user ]
+      properties:
+        type:
+          type: string
+          enum: [ control, start, shutdown, maintenance ]
+        pitch:
+          type: integer
+          nullable: true
+        yaw:
+          type: integer
+          nullable: true
+        timestamp:
+          type: string
+          format: date-time
+        user:
+          type: string
+
+    Alert:
+      type: object
+      required: [ id, turbineId, type, status, acknowledged, timestamp ]
+      properties:
+        id:
+          type: integer
+        turbineId:
+          type: integer
+        type:
+          type: string
+          example: HighRPM
+        status:
+          type: string
+          enum: [ firing, resolved ]
+        acknowledged:
+          type: string
+          enum: [ acknowledged, unacknowledged ]
+        timestamp:
+          type: string
+          format: date-time
+
+    AckResponse:
+      type: object
+      required: [ status ]
+      properties:
+        status:
+          type: string
+          enum: [ acknowledged ]
+          example: acknowledged
+
+    RoleAssignRequest:
+      type: object
+      required: [ username, role ]
+      properties:
+        username:
+          type: string
+        role:
+          type: string
+          enum: [ operator, admin ]
+
+    RoleAssignResponse:
+      type: object
+      required: [ status ]
+      properties:
+        status:
+          type: string
+          enum: [ success ]
+          example: success
+
+    LogEntry:
+      type: object
+      required: [ timestamp, level, message ]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        level:
+          type: string
+          enum: [ info, warning, error ]
+        message:
+          type: string
+
+    LogsResponse:
+      type: object
+      required: [ turbineId, entries ]
+      properties:
+        turbineId:
+          type: integer
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogEntry'
+
+  responses:
+    UnauthorizedError:
+      description: Authentication failed / missing
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    ForbiddenError:
+      description: Insufficient privileges
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    ValidationError:
+      description: Request failed validation
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    ConflictError:
+      description: Request conflicts with current resource state
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    InternalServerError:
+      description: Unhandled server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+
+paths:
+  /auth/login:
+    post:
+      tags: [ Auth ]
+      summary: Authenticate user and issue token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful authentication.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/assign-role:
+    post:
+      tags: [ Auth ]
+      summary: Assign a role to a user (admin only).
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleAssignRequest'
+      responses:
+        '204':
+          description: Role assigned successfully; no body
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /turbines:
+    get:
+      tags: [ Turbines ]
+      summary: List turbines (public).
+      responses:
+        '200':
+          description: Array of turbine summaries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TurbineSummary'
+
+  /turbines/{id}/status:
+    get:
+      tags: [ Turbines ]
+      summary: Get turbine live status (public).
+      parameters:
+        - $ref: '#/components/parameters/LogTurbineId'
+      responses:
+        '200':
+          description: Turbine status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TurbineStatus'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /turbines/{id}/actions:
+    get:
+      tags: [ Turbines ]
+      summary: Get actions executed on turbine (public).
+      parameters:
+        - $ref: '#/components/parameters/LogTurbineId'
+      responses:
+        '200':
+          description: List of actions.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActionEntry'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /turbines/{id}/control:
+    post:
+      tags: [ Turbines ]
+      summary: Set pitch and yaw (operator or admin).
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/LogTurbineId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ControlRequest'
+      responses:
+        '200':
+          description: Control accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /turbines/{id}/start:
+    post:
+      tags: [ Turbines ]
+      summary: Start turbine (operator or admin).
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/LogTurbineId'
+      responses:
+        '200':
+          description: Turbine started.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /turbines/{id}/shutdown:
+    post:
+      tags: [ Turbines ]
+      summary: Shutdown turbine (operator or admin).
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/LogTurbineId'
+      responses:
+        '200':
+          description: Turbine shutdown.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /turbines/{id}/maintenance:
+    post:
+      tags: [ Turbines ]
+      summary: Enter maintenance mode (operator or admin).
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/LogTurbineId'
+      responses:
+        '200':
+          description: Turbine in maintenance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /turbines/{id}/logs:
+    get:
+      tags: [ Turbines ]
+      summary: Retrieve turbine logs (operator or admin).
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/LogTurbineId'
+        - $ref: '#/components/parameters/LogLevelsQuery'
+        - $ref: '#/components/parameters/LogMessageQuery'
+      responses:
+        '200':
+          description: Logs response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogsResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /alerts:
+    get:
+      tags: [ Alerts ]
+      summary: List active alerts (operator or admin).
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Array of alerts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /alerts/{id}/ack:
+    post:
+      tags: [ Alerts ]
+      summary: Acknowledge an alert (operator or admin).
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Alert acknowledged.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AckResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'

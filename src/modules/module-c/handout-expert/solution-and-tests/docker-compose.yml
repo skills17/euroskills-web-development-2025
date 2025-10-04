@@ -1,0 +1,68 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-windfarm}
+      MYSQL_USER: ${MYSQL_USER:-windfarm}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-windfarm}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # run SQL on first boot
+      - ./seed.sql:/docker-entrypoint-initdb.d/01_seed.sql:ro
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  module-c:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+      external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm"
+      EXTERNAL_API_BASE_URL: "http://external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  external-turbine-api:
+    build:
+      context: ../../handout-competitor/external-turbine-api
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

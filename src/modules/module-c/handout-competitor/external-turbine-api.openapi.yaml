@@ -1,0 +1,206 @@
+openapi: 3.0.3
+info:
+  title: Offshore Wind-Farm External Turbine API
+  version: 1.0.0
+  description: |
+    Third-party service that exposes **live turbine telemetry** and **raw log files**.
+    Your backend (Module C) **consumes** this API.
+
+servers:
+  - url: http://{baseUrl}
+    variables:
+      baseUrl:
+        default: api.example.com      # replace with value from the competition hand-out
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Coordinates:
+      type: object
+      required: [ lat, lng ]
+      properties:
+        lat:
+          type: number
+          format: double
+          example: 56.4501
+          description: Latitude in decimal degrees
+        lng:
+          type: number
+          format: double
+          example: 8.3465
+          description: Longitude in decimal degrees
+    Turbine:
+      type: object
+      required: [ id, name, location, status ]
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: Unique turbine identifier
+        name:
+          type: string
+          example: Turbine A1
+        location:
+          $ref: '#/components/schemas/Coordinates'
+        rpm:
+          type: integer
+          nullable: true
+          example: 47
+          description: Rotations per minute
+        powerMw:
+          type: number
+          format: float
+          nullable: true
+          example: 1.9
+          description: Power output in megawatts
+        yaw:
+          type: integer
+          nullable: true
+          minimum: 0
+          maximum: 360
+          example: 270
+          description: Yaw angle (°)
+        pitch:
+          type: integer
+          nullable: true
+          minimum: -90
+          maximum: 90
+          example: 22
+          description: Blade pitch angle (°)
+        temperature:
+          type: number
+          format: float
+          nullable: true
+          example: 35.2
+          description: Temperature (°C)
+        status:
+          type: string
+          enum: [ started, maintenance, shutdown ]
+          example: started
+    TurbineListResponse:
+      type: object
+      required: [ timestamp, data ]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: 2025-06-21T10:12:00Z
+          description: Moment the snapshot was generated
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Turbine'
+
+security:
+  - bearerAuth: [ ]
+
+paths:
+  /turbines:
+    get:
+      summary: List live turbines
+      description: Returns the most recent telemetry for **all** turbines.
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Snapshot of turbines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TurbineListResponse'
+              examples:
+                example:
+                  value:
+                    timestamp: "2025-06-21T10:12:00Z"
+                    data:
+                      - id: 1
+                        name: Turbine A1
+                        location: { lat: 56.4501, lng: 8.3465 }
+                        rpm: 47
+                        powerMw: 1.9
+                        yaw: 270
+                        pitch: 22
+                        temperature: 35.2
+                        status: started
+        '401':
+          description: Missing or invalid bearer token
+        '5XX':
+          description: Upstream error
+
+  /turbines/{id}/status:
+    post:
+      summary: Set the new status.
+      description: |
+        Sets the turbine status.
+        Does not validate if it is valid and needs to be done by
+        the caller.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ status ]
+              properties:
+                status:
+                  type: string
+                  example: started
+      responses:
+        '200':
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: ok
+        '401':
+          description: Missing or invalid bearer token
+        '404':
+          description: Turbine not found
+
+  /turbines/{id}/logs:
+    get:
+      summary: Fetch latest raw logs for a turbine
+      description: |
+        Returns **up to 1000** log lines per request, newest last.
+        Use the MIME-type `text/plain` because logs are unstructured.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Turbine identifier
+      responses:
+        '200':
+          description: Plain-text log dump
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                2025-06-21T10:12:00Z [Info] Turbine started using config /etc/turbine-a1.json
+                2025-06-21T10:15:00Z [Warning] Turbine start delayed due to low wind conditions
+                2025-06-21T10:20:00Z [Error] Turbine lost satellite fallback connection. Details:
+                multi line error message belonging to the sensor failure
+                second line of the error message still belongs to the sensor failure
+                2025-06-21T10:25:00Z [Info] Maintenance mode activated
+        '401':
+          description: Missing or invalid bearer token
+        '404':
+          description: Turbine not found
+        '5XX':
+          description: Upstream error

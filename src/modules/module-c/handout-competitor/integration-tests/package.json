@@ -1,0 +1,14 @@
+{
+    "name": "euroskills-2025-module-c-integration-tests",
+    "version": "1.0.0",
+    "scripts": {
+        "test": "jest --runInBand --verbose"
+    },
+    "private": true,
+    "license": "UNLICENSED",
+    "devDependencies": {
+        "jest": "^30.1.1",
+        "supertest": "^7.1.4",
+        "dotenv": "^17.2.1"
+    }
+}

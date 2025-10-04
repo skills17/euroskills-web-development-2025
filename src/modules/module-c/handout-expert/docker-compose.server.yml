@@ -1,0 +1,296 @@
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/usr/share/nginx/html
+    restart: unless-stopped
+    depends_on:
+      - jykor-external-turbine-api
+      - 8pd2c-external-turbine-api
+      - wy24u-external-turbine-api
+      - m6uq1-external-turbine-api
+      - xyrin-external-turbine-api
+      - m7igt-external-turbine-api
+      - hlvv7-external-turbine-api
+      - rfjy4-external-turbine-api
+      - aa9rt-external-turbine-api
+      - th3wy-external-turbine-api
+      - efvuk-external-turbine-api
+      - lxabt-external-turbine-api
+      - rdhkk-external-turbine-api
+      - o8bmr-external-turbine-api
+      - yiuzf-external-turbine-api
+      - qd3dx-external-turbine-api
+      - dxsup-external-turbine-api
+      - vq0xr-external-turbine-api
+      - bpgx0-external-turbine-api
+      - dpmuc-external-turbine-api
+      - jletf-external-turbine-api
+      - poe9o-external-turbine-api
+
+  jykor-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  8pd2c-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  wy24u-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  m6uq1-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  xyrin-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  m7igt-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  hlvv7-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rfjy4-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  aa9rt-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  th3wy-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  efvuk-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  lxabt-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rdhkk-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  o8bmr-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  yiuzf-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qd3dx-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dxsup-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  vq0xr-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bpgx0-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dpmuc-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  jletf-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  poe9o-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

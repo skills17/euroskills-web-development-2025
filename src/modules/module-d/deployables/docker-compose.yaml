@@ -1,0 +1,691 @@
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-ssl.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx-http.conf:/etc/nginx/nginx.conf:ro
+      - ./static:/usr/share/nginx/html
+      - ./ssl:/etc/nginx/ssl:ro
+    restart: unless-stopped
+    depends_on:
+      - jykor-external-turbine-api
+      - jykor-backend-api
+      - 8pd2c-external-turbine-api
+      - 8pd2c-backend-api
+      - wy24u-external-turbine-api
+      - wy24u-backend-api
+      - m6uq1-external-turbine-api
+      - m6uq1-backend-api
+      - xyrin-external-turbine-api
+      - xyrin-backend-api
+      - m7igt-external-turbine-api
+      - m7igt-backend-api
+      - hlvv7-external-turbine-api
+      - hlvv7-backend-api
+      - rfjy4-external-turbine-api
+      - rfjy4-backend-api
+      - aa9rt-external-turbine-api
+      - aa9rt-backend-api
+      - th3wy-external-turbine-api
+      - th3wy-backend-api
+      - efvuk-external-turbine-api
+      - efvuk-backend-api
+      - lxabt-external-turbine-api
+      - lxabt-backend-api
+      - rdhkk-external-turbine-api
+      - rdhkk-backend-api
+      - o8bmr-external-turbine-api
+      - o8bmr-backend-api
+      - yiuzf-external-turbine-api
+      - yiuzf-backend-api
+      - qd3dx-external-turbine-api
+      - qd3dx-backend-api
+      - dxsup-external-turbine-api
+      - dxsup-backend-api
+      - vq0xr-external-turbine-api
+      - vq0xr-backend-api
+      - bpgx0-external-turbine-api
+      - bpgx0-backend-api
+      - dpmuc-external-turbine-api
+      - dpmuc-backend-api
+      - jletf-external-turbine-api
+      - jletf-backend-api
+      - poe9o-external-turbine-api
+      - poe9o-backend-api
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  jykor-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  8pd2c-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  wy24u-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  m6uq1-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  xyrin-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  m7igt-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  hlvv7-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rfjy4-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  aa9rt-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  th3wy-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  efvuk-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  lxabt-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rdhkk-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  o8bmr-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  yiuzf-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qd3dx-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dxsup-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  vq0xr-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bpgx0-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dpmuc-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  jletf-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  poe9o-external-turbine-api:
+    image: module-c-external-turbine-api
+    environment:
+      PORT: 4000
+      BEARER: SECRET_TOKEN_123
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  jykor-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      jykor-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_jykor"
+      EXTERNAL_API_BASE_URL: "http://jykor-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  8pd2c-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      8pd2c-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_8pd2c"
+      EXTERNAL_API_BASE_URL: "http://8pd2c-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  wy24u-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      wy24u-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_wy24u"
+      EXTERNAL_API_BASE_URL: "http://wy24u-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  m6uq1-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      m6uq1-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_m6uq1"
+      EXTERNAL_API_BASE_URL: "http://m6uq1-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  xyrin-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      xyrin-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_xyrin"
+      EXTERNAL_API_BASE_URL: "http://xyrin-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  m7igt-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      m7igt-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_m7igt"
+      EXTERNAL_API_BASE_URL: "http://m7igt-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  hlvv7-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      hlvv7-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_hlvv7"
+      EXTERNAL_API_BASE_URL: "http://hlvv7-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  rfjy4-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rfjy4-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_rfjy4"
+      EXTERNAL_API_BASE_URL: "http://rfjy4-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  aa9rt-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      aa9rt-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_aa9rt"
+      EXTERNAL_API_BASE_URL: "http://aa9rt-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  th3wy-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      th3wy-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_th3wy"
+      EXTERNAL_API_BASE_URL: "http://th3wy-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  efvuk-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      efvuk-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_efvuk"
+      EXTERNAL_API_BASE_URL: "http://efvuk-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  lxabt-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      lxabt-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_lxabt"
+      EXTERNAL_API_BASE_URL: "http://lxabt-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  rdhkk-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rdhkk-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_rdhkk"
+      EXTERNAL_API_BASE_URL: "http://rdhkk-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  o8bmr-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      o8bmr-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_o8bmr"
+      EXTERNAL_API_BASE_URL: "http://o8bmr-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  yiuzf-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      yiuzf-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_yiuzf"
+      EXTERNAL_API_BASE_URL: "http://yiuzf-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  qd3dx-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      qd3dx-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_qd3dx"
+      EXTERNAL_API_BASE_URL: "http://qd3dx-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  dxsup-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      dxsup-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_dxsup"
+      EXTERNAL_API_BASE_URL: "http://dxsup-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  vq0xr-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      vq0xr-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_vq0xr"
+      EXTERNAL_API_BASE_URL: "http://vq0xr-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  bpgx0-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      bpgx0-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_bpgx0"
+      EXTERNAL_API_BASE_URL: "http://bpgx0-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  dpmuc-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      dpmuc-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_dpmuc"
+      EXTERNAL_API_BASE_URL: "http://dpmuc-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  jletf-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      jletf-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_jletf"
+      EXTERNAL_API_BASE_URL: "http://jletf-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  poe9o-backend-api:
+    image: backend-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      poe9o-external-turbine-api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/windfarm_poe9o"
+      EXTERNAL_API_BASE_URL: "http://poe9o-external-turbine-api:4000"
+      EXTERNAL_API_TOKEN: SECRET_TOKEN_123
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/__health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

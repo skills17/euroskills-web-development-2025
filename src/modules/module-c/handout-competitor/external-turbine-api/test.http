@@ -1,0 +1,96 @@
+### Variables
+@host = http://localhost:4000
+@token = SECRET_TOKEN_123
+
+### Open control panel (in browser)
+GET {{host}}/control
+
+###
+# Admin: reset to defaults
+POST {{host}}/__admin/reset
+
+###
+# Admin: set timestamp (leave empty value to set "now")
+POST {{host}}/__admin/timestamp?timestamp=2025-06-21T10:12:00Z
+
+###
+# Normal snapshot
+GET {{host}}/turbines
+Authorization: Bearer {{token}}
+
+###
+# Example 401 (missing token)
+GET {{host}}/turbines
+
+###
+# Partial turbines scenario
+POST {{host}}/__admin/scenario
+Content-Type: application/json
+
+{ "scenario": "partial_turbines" }
+
+###
+GET {{host}}/turbines
+Authorization: Bearer {{token}}
+
+###
+POST {{host}}/turbines/1/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "status": "foobar" }
+
+###
+# Partial properties scenario
+POST {{host}}/__admin/scenario
+Content-Type: application/json
+
+{ "scenario": "partial_properties" }
+
+###
+GET {{host}}/turbines
+Authorization: Bearer {{token}}
+
+###
+# Empty data scenario
+POST {{host}}/__admin/scenario
+Content-Type: application/json
+
+{ "scenario": "empty" }
+
+###
+GET {{host}}/turbines
+Authorization: Bearer {{token}}
+
+###
+# Logs (plain text) for turbine 1
+GET {{host}}/turbines/1/logs
+Authorization: Bearer {{token}}
+
+###
+# Logs (plain text) for inexistent turbine (404)
+GET {{host}}/turbines/999/logs
+Authorization: Bearer {{token}}
+
+###
+# Simulate delay / timeout (set high to trigger your client timeout)
+POST {{host}}/__admin/delay?delayMs=2000
+
+###
+GET {{host}}/turbines
+Authorization: Bearer {{token}}
+
+###
+# 500 errors scenario
+POST {{host}}/__admin/scenario
+Content-Type: application/json
+
+{ "scenario": "error_500" }
+
+###
+GET {{host}}/turbines
+Authorization: Bearer {{token}}
+
+###
+# Inspect current mock state
+GET {{host}}/__admin/state
